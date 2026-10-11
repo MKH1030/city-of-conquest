@@ -1,0 +1,242 @@
+
+import random
+
+# =====================================
+#          KINGDOM CONQUEST
+# =====================================
+
+kingdom = {
+    "gold": 100,
+    "wood": 100,
+    "food": 100,
+    "castle_level": 1,
+    "soldiers": 10,
+    "territory": 1,
+    "days": 1
+}
+
+enemy = {
+    "soldiers": 20,
+    "territory": 3
+}
+
+
+def show_status():
+    print("\n========== YOUR KINGDOM ==========")
+    print("Day:", kingdom["days"])
+    print("Gold:", kingdom["gold"])
+    print("Wood:", kingdom["wood"])
+    print("Food:", kingdom["food"])
+    print("Castle level:", kingdom["castle_level"])
+    print("Soldiers:", kingdom["soldiers"])
+    print("Territories:", kingdom["territory"])
+    print("==================================")
+
+
+def gather_resources():
+    gold = random.randint(20, 50)
+    wood = random.randint(20, 50)
+    food = random.randint(20, 50)
+
+    kingdom["gold"] += gold
+    kingdom["wood"] += wood
+    kingdom["food"] += food
+
+    print("\nYour workers gathered:")
+    print("Gold:", gold)
+    print("Wood:", wood)
+    print("Food:", food)
+
+
+def build_farm():
+    cost = 30
+
+    if kingdom["wood"] >= cost:
+        kingdom["wood"] -= cost
+        kingdom["food"] += 60
+        print("\nFarm built! Your food increased by 60.")
+    else:
+        print("\nNot enough wood! You need 30 wood.")
+
+
+def upgrade_castle():
+    cost_gold = kingdom["castle_level"] * 100
+    cost_wood = kingdom["castle_level"] * 80
+
+    print("\nCastle upgrade cost:")
+    print("Gold:", cost_gold)
+    print("Wood:", cost_wood)
+
+    if (kingdom["gold"] >= cost_gold
+            and kingdom["wood"] >= cost_wood):
+
+        kingdom["gold"] -= cost_gold
+        kingdom["wood"] -= cost_wood
+        kingdom["castle_level"] += 1
+
+        print("Castle upgraded to level",
+              kingdom["castle_level"], "!")
+
+    else:
+        print("You don't have enough resources.")
+
+
+def train_soldiers():
+    print("\n1. Train 5 soldiers")
+    print("2. Train 10 soldiers")
+    choice = input("Choose: ")
+
+    if choice == "1":
+        amount = 5
+    elif choice == "2":
+        amount = 10
+    else:
+        print("Invalid choice.")
+        return
+
+    gold_cost = amount * 5
+    food_cost = amount * 3
+
+    if (kingdom["gold"] >= gold_cost
+            and kingdom["food"] >= food_cost):
+
+        kingdom["gold"] -= gold_cost
+        kingdom["food"] -= food_cost
+        kingdom["soldiers"] += amount
+
+        print(amount, "soldiers trained!")
+
+    else:
+        print("Not enough gold or food.")
+
+
+def attack_enemy():
+    if kingdom["soldiers"] < 5:
+        print("\nYou need at least 5 soldiers to attack!")
+        return
+
+    print("\nYour soldiers:", kingdom["soldiers"])
+    print("Enemy soldiers:", enemy["soldiers"])
+
+    power = kingdom["soldiers"] * random.uniform(0.7, 1.3)
+    enemy_power = enemy["soldiers"] * random.uniform(0.7, 1.3)
+
+    print("\nThe battle begins!")
+
+    if power > enemy_power:
+        lost = min(
+            kingdom["soldiers"],
+            random.randint(1, max(1, kingdom["soldiers"] // 3))
+        )
+
+        kingdom["soldiers"] -= lost
+        kingdom["territory"] += 1
+
+        gold_reward = random.randint(50, 100)
+        kingdom["gold"] += gold_reward
+
+        print("VICTORY! You conquered enemy territory!")
+        print("Soldiers lost:", lost)
+        print("Gold captured:", gold_reward)
+
+        enemy["soldiers"] = max(
+            5, enemy["soldiers"] - random.randint(2, 5)
+        )
+        enemy["territory"] = max(0, enemy["territory"] - 1)
+
+    else:
+        lost = min(
+            kingdom["soldiers"],
+            random.randint(1, max(1, kingdom["soldiers"] // 2))
+        )
+
+        kingdom["soldiers"] -= lost
+
+        print("DEFEAT! The enemy defended its territory.")
+        print("Soldiers lost:", lost)
+
+        enemy["soldiers"] += random.randint(2, 5)
+
+
+def end_day():
+    kingdom["days"] += 1
+
+    food_needed = kingdom["soldiers"] * 2
+    kingdom["food"] -= food_needed
+
+    print("\nA new day begins!")
+    print("Your army consumed", food_needed, "food.")
+
+    if kingdom["food"] < 0:
+        kingdom["food"] = 0
+        lost = min(kingdom["soldiers"], 2)
+        kingdom["soldiers"] -= lost
+
+        print("Food shortage! You lost", lost, "soldiers.")
+
+
+def game_over():
+    if kingdom["territory"] >= 5:
+        print("\n🏆 VICTORY! You control 5 territories!")
+        return True
+
+    if kingdom["castle_level"] >= 5:
+        print("\n🏆 VICTORY! Your castle reached level 5!")
+        return True
+
+    if kingdom["soldiers"] <= 0:
+        print("\nGAME OVER! Your army has been defeated.")
+        return True
+
+    return False
+
+
+def main():
+    print("===================================")
+    print("       KINGDOM CONQUEST")
+    print("===================================")
+    print("Build your kingdom. Train your army.")
+    print("Conquer territories and become king!")
+    print("\nVictory conditions:")
+    print("- Control 5 territories")
+    print("- Reach castle level 5")
+    print("- Keep your army alive!")
+
+    while True:
+        show_status()
+
+        print("\n========== MAIN MENU ==========")
+        print("1. Gather resources")
+        print("2. Build a farm")
+        print("3. Upgrade castle")
+        print("4. Train soldiers")
+        print("5. Attack enemy")
+        print("6. End day")
+        print("7. Quit game")
+
+        choice = input("\nChoose an action: ")
+
+        if choice == "1":
+            gather_resources()
+        elif choice == "2":
+            build_farm()
+        elif choice == "3":
+            upgrade_castle()
+        elif choice == "4":
+            train_soldiers()
+        elif choice == "5":
+            attack_enemy()
+        elif choice == "6":
+            end_day()
+        elif choice == "7":
+            print("Thanks for playing Kingdom Conquest!")
+            break
+        else:
+            print("Invalid choice. Try again.")
+
+        if game_over():
+            break
+
+
+if __name__ == "__main__":
+    main()
