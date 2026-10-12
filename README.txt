@@ -1,21 +1,33 @@
-KINGDOM CONQUEST: CROWN & REALM
+KINGDOM CONQUEST: CROWN & REALM — ENDLESS FRONTIER EDITION
 
 FILES
-- index.html: game layout and buttons
-- style.css: colors, layout, and mobile-friendly design
-- game.js: game rules, quests, battles, resources, research, and saving
+- index.html: game page
+- style.css: mobile-friendly layout and styling
+- game.js: gameplay, expanding world, battles, economy, quests, saving
+- README.txt: this guide
 
-UPLOAD USING YOUR ANDROID PHONE
-1. Download and extract kingdom_conquest_full_game.zip in your phone's Files app.
-2. Open your GitHub repository in Chrome.
-3. Back up your old index.html if you want to keep it.
-4. Upload ALL THREE files (index.html, style.css, game.js) to the ROOT of the repository, not inside a subfolder.
-5. Commit changes.
-6. In Settings -> Pages, select Deploy from a branch, branch main, folder /(root), then Save.
-7. Wait a few minutes and open the GitHub Pages URL.
+PLAY LOCALLY
+1. Keep all four files together in the same folder.
+2. Open index.html in a modern browser. Some mobile browsers restrict local-file storage; if saves do not work locally, publish through GitHub Pages.
 
-SAVE SYSTEM
-The game autosaves in the browser's local storage after most actions. You can also tap Save and Load. Save data is stored on the current browser/device and does not sync across devices. Clearing browser data can erase it.
+PUBLISH ON GITHUB PAGES (PHONE-FRIENDLY)
+1. Open your GitHub repository.
+2. Upload index.html, style.css, game.js, and README.txt to the repository's root folder.
+3. Open Settings > Pages.
+4. Under Build and deployment, choose Deploy from a branch, select main and /(root), then Save.
+5. Wait for deployment and open the Pages URL shown in Settings > Pages.
 
-IMPORTANT
-This is a browser game made with HTML/CSS/JavaScript, not a Python file. Do not paste these files into Programiz's main.py. GitHub Pages can host these files for free.
+ENDLESS WORLD FEATURES
+- Starts with a hand-built set of regions.
+- Use “Explore beyond the frontier” in the World tab to generate five more regions at a time.
+- Generated regions become progressively stronger and offer larger rewards.
+- No final region or level-based victory screen.
+- Rival invasions can threaten the capital. If your army cannot defend it, the campaign ends and you must start a new one.
+- Save/Load and automatic local saves use this browser's local storage. Saves do not automatically sync between devices or browsers.
+
+TIPS
+- Gather resources, build farms/lumber camps/mines, train troops, and upgrade your castle before pushing into stronger regions.
+- End the day to collect income, feed troops, and advance the campaign. Rival invasions may occur from day 5 onward.
+- Starting a new campaign replaces the current campaign in memory and its local autosave.
+
+This is a static HTML/CSS/JavaScript game and is compatible with GitHub Pages; no server or build step is required.
