@@ -1,49 +1,91 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kingdom Conquest</title>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#142338;color:#f4f6fa;font:16px system-ui,Arial}main{max-width:950px;margin:auto;padding:14px}h1,h2{color:#ffd166}h1{margin:5px 0}h2{font-size:1.05rem;margin:0 0 10px}.muted{color:#b8c8da;font-size:.85rem}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}.stat,.panel{background:#20344c;border:1px solid #47617e;border-radius:12px;padding:10px}.stat{text-align:center}.stat b{display:block;font-size:1.15rem}.stat small{color:#b8c8da}.layout{display:grid;gap:12px}.scene{padding:12px;text-align:center;border-radius:12px;background:linear-gradient(#77c9f3 0 52%,#9edc78 52%);color:#20344c;min-height:165px;border:2px solid #6c91a9}.scene .castle{font-size:4rem}.scene .land{font-size:1.8rem}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.btn{padding:11px 7px;min-height:47px;border-radius:9px;border:1px solid #7088a3;background:#354f6d;color:white;font-weight:700;cursor:pointer}.green{background:#218650}.gold{background:#96621c}.blue{background:#245f9a}.purple{background:#69429b}.red{background:#a63843}.tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}.tab{flex:1}.active{outline:2px solid #ffd166}.hidden{display:none!important}.map{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.tile{padding:8px 4px;min-height:70px;border-radius:9px;background:#2d455f;border:1px solid #58718b;color:white}.owned{background:#246548}.tile small{display:block;color:#d8e4ef}.unit{padding:9px;background:#17283c;border:1px solid #3e5874;border-radius:9px;margin:7px 0}.log{max-height:190px;overflow:auto}.log p{border-bottom:1px solid #ffffff20;padding-bottom:5px;margin:5px 0}.row{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}.bar{height:9px;background:#101b2a;border-radius:8px;overflow:hidden}.bar div{height:100%;background:#f0c24e}@media(min-width:700px){.layout{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(6,1fr)}.grid.actions{grid-template-columns:repeat(3,1fr)}}
-</style></head><body><main>
-<header class="row"><div><h1>👑 Kingdom Conquest</h1><div class="muted">Realm Builder — grow, research, trade, and conquer.</div></div><div><button class="btn" id="save">💾 Save</button> <button class="btn" id="reset">↻ New Game</button></div></header>
-<div class="stats"><div class="stat">🪙<b id="gold">100</b><small>Gold</small></div><div class="stat">🪵<b id="wood">100</b><small>Wood</small></div><div class="stat">🌾<b id="food">100</b><small>Food</small></div><div class="stat">🪨<b id="stone">40</b><small>Stone</small></div><div class="stat">⚔️<b id="army">10</b><small>Army power</small></div><div class="stat">📅<b id="day">1</b><small>Day</small></div></div>
-<div class="layout"><section>
-<div class="scene"><div>☁️　☁️　☁️</div><div class="land">⛰️　🌲　⛰️</div><div class="castle" id="castle">🏰</div><b>YOUR CAPITAL</b></div>
-<div class="panel"><h2>🏰 Realm status</h2><div class="row"><span>Castle: <b id="level">1</b></span><span>Population: <b id="pop">20</b></span><span>Territories: <b id="territory">1</b></span></div><p class="muted">Castle progress</p><div class="bar"><div id="bar" style="width:20%"></div></div><p class="muted">Army consumes 2 food per soldier every day.</p></div>
-<div class="panel"><h2>🗺️ World map</h2><div class="map" id="map"></div><p class="muted">Tap a region to attack it. Stronger regions need a stronger army.</p></div>
-</section><section>
-<div class="panel"><div class="tabs"><button class="btn tab active" data-tab="kingdom">🏗️ Kingdom</button><button class="btn tab" data-tab="armyTab">🛡️ Army</button><button class="btn tab" data-tab="research">🔬 Research</button><button class="btn tab" data-tab="quests">📜 Quests</button></div>
-<div id="kingdom"><h2>Kingdom actions</h2><div class="grid actions"><button class="btn green" id="gather">🪙 Gather resources</button><button class="btn gold" id="farm">🌾 Build farm<br>30 wood</button><button class="btn" id="mine">⛏️ Build mine<br>40 wood</button><button class="btn blue" id="upgrade">🏰 Upgrade castle</button><button class="btn" id="market">🛒 Trade at market</button><button class="btn purple" id="end">🌙 End day</button></div><p class="muted">Farms and mines generate resources each day.</p></div>
-<div id="armyTab" class="hidden"><h2>Recruitment & war</h2><div class="grid"><button class="btn" id="infantry">🛡️ Recruit 5 infantry<br>25 gold, 15 food</button><button class="btn" id="archers">🏹 Recruit 5 archers<br>35 gold, 10 wood</button><button class="btn" id="cavalry">🐎 Recruit 3 cavalry<br>60 gold, 20 food</button><button class="btn red" id="raid">⚔️ Attack weakest region</button></div><div id="units"></div></div>
-<div id="research" class="hidden"><h2>Research</h2><div class="unit"><b>🌱 Better Farming</b><p class="muted">Farms produce more food. Cost: 80 gold, 30 wood.</p><button class="btn" id="farmTech">Research</button></div><div class="unit"><b>⚔️ Military Tactics</b><p class="muted">Army gains 20% battle power. Cost: 100 gold, 40 stone.</p><button class="btn" id="warTech">Research</button></div><div class="unit"><b>🪙 Trade Routes</b><p class="muted">Market trades earn more gold. Cost: 90 gold, 20 wood.</p><button class="btn" id="tradeTech">Research</button></div></div>
-<div id="quests" class="hidden"><h2>Quests</h2><div id="questList"></div><button class="btn green" id="claim">🎁 Claim rewards</button></div></div>
-<div class="panel"><h2>📖 Royal chronicles</h2><div class="log" id="log"><p>Your reign begins. Gather supplies, develop your realm, and prepare for rival kingdoms.</p></div></div>
-</section></div><p class="muted">Save progress on this browser. Browser data clearing may erase it.</p></main>
-<script>
-const fresh=()=>({gold:100,wood:100,food:100,stone:40,level:1,pop:20,territory:1,day:1,infantry:10,archers:0,cavalry:0,farms:0,mines:0,owned:[0],research:{farm:false,war:false,trade:false},quests:{gather:false,build:false,claimed:[]},over:false});
-let s=fresh(),$=id=>document.getElementById(id);
-const regions=[["🌳","Greenfields",12,70],["🏕️","Bandit Woods",20,100],["⛰️","Iron Hills",30,140],["🌋","Red Valley",42,180],["❄️","Frost March",55,230],["🐉","Dragon Keep",75,350],["🌊","Coastlands",35,160],["🏛️","Old Ruins",48,210],["👑","Royal Capital",95,500]];
-function say(t){let p=document.createElement("p");p.textContent=t;$("log").prepend(p)}function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-function power(){let p=s.infantry+s.archers*1.4+s.cavalry*2;return Math.floor(p*(s.research.war?1.2:1))}
-function render(){["gold","wood","food","stone","day","level","pop","territory"].forEach(k=>$(k).textContent=s[k]);$("army").textContent=power();$("bar").style.width=Math.min(100,s.level*20)+"%";$("castle").textContent=s.level>=4?"🏯":"🏰";$("units").innerHTML=`<div class="unit">🛡️ Infantry: <b>${s.infantry}</b></div><div class="unit">🏹 Archers: <b>${s.archers}</b></div><div class="unit">🐎 Cavalry: <b>${s.cavalry}</b></div>`;renderMap();renderQuests()}
-function renderMap(){$("map").innerHTML="";regions.forEach((r,i)=>{let b=document.createElement("button");b.className="tile "+(s.owned.includes(i)?"owned":"");b.innerHTML=`${r[0]} ${r[1]}<small>${s.owned.includes(i)?"Owned":"Enemy power: "+r[2]}</small>`;b.onclick=()=>raid(i);$("map").append(b)})}
-function renderQuests(){let q=[["gather","Gather resources",s.quests.gather],["build","Build a farm or mine",s.quests.build],["win","Conquer 2 regions",s.territory>=3]];$("questList").innerHTML=q.map(([id,t,d])=>`<div class="unit">${d?"✅":"⬜"} ${t} — ${s.quests.claimed.includes(id)?"Reward claimed":d?"Reward ready":"Reward: 50 gold"}</div>`).join("")}
-function finish(){if(s.territory>=7||s.level>=5){say("🏆 VICTORY! You are the greatest ruler in the realm!");s.over=true}else if(s.infantry+s.archers+s.cavalry<=0){say("💀 GAME OVER. Your army is gone. Start a new game.");s.over=true}}
-function act(f){if(s.over)return;f();render();finish()}function pay(c){for(let k in c)if(s[k]<c[k]){say("Not enough resources: "+Object.entries(c).map(([a,b])=>b+" "+a).join(", "));return false}for(let k in c)s[k]-=c[k];return true}
-$("gather").onclick=()=>act(()=>{let g=rand(25,55),w=rand(20,45),f=rand(20,45),st=rand(5,15);s.gold+=g;s.wood+=w;s.food+=f;s.stone+=st;s.quests.gather=true;say(`Gathered ${g} gold, ${w} wood, ${f} food, ${st} stone.`)});
-$("farm").onclick=()=>act(()=>{if(pay({wood:30})){s.farms++;s.quests.build=true;say("Farm built! It produces food each day.")}});
-$("mine").onclick=()=>act(()=>{if(pay({wood:40})){s.mines++;s.quests.build=true;say("Mine built! It produces stone each day.")}});
-$("upgrade").onclick=()=>act(()=>{if(pay({gold:s.level*100,wood:s.level*80,stone:s.level*20})){s.level++;s.pop+=10;say("Castle upgraded to level "+s.level+". Population +10.")}});
-$("market").onclick=()=>act(()=>{let m=s.research.trade?1.25:1;if(s.food>=20){s.food-=20;s.gold+=Math.floor(50*m);say("Traded 20 food for gold.")}else if(s.wood>=20){s.wood-=20;s.gold+=Math.floor(40*m);say("Traded 20 wood for gold.")}else say("Need 20 food or 20 wood to trade.")});
-function recruit(t,n,c){act(()=>{if(pay(c)){s[t]+=n;say("Recruited "+n+" "+t+".")}})}$("infantry").onclick=()=>recruit("infantry",5,{gold:25,food:15});$("archers").onclick=()=>recruit("archers",5,{gold:35,wood:10});$("cavalry").onclick=()=>recruit("cavalry",3,{gold:60,food:20});
-function raid(i){if(s.over||s.owned.includes(i))return;let r=regions[i];if(power()<r[2]){say("Your army power ("+power()+") is too low for "+r[1]+" ("+r[2]+").");return}if(power()*(.75+Math.random()*.5)>r[2]*(.8+Math.random()*.5)){s.owned.push(i);s.territory=s.owned.length;s.gold+=r[3];let loss=Math.min(s.infantry,rand(1,Math.max(1,Math.floor(s.infantry/4))));s.infantry-=loss;say("Victory at "+r[1]+"! +"+r[3]+" gold. Lost "+loss+" infantry.")}else{let loss=Math.min(s.infantry,rand(1,Math.max(1,Math.floor(s.infantry/3))));s.infantry-=loss;say("Defeat at "+r[1]+". Lost "+loss+" infantry.")}render();finish()}
-$("raid").onclick=()=>{let i=regions.findIndex((r,i)=>!s.owned.includes(i)&&r[2]<=power()+5);if(i<0){say("Recruit more troops before raiding.");return}raid(i)};
-$("end").onclick=()=>act(()=>{s.day++;let n=(s.infantry+s.archers+s.cavalry)*2;s.food-=n;s.food+=s.farms*(s.research.farm?25:20);s.stone+=s.mines*10;s.gold+=s.territory*3;say(`Day ${s.day}: army ate ${n} food; farms made ${s.farms*(s.research.farm?25:20)} food; mines made ${s.mines*10} stone; taxes earned ${s.territory*3} gold.`);if(s.food<0){s.food=0;let l=Math.min(s.infantry,2);s.infantry-=l;say("Famine! Lost "+l+" infantry.")}});
-function tech(id,c,msg){act(()=>{if(s.research[id]){say("Already researched.");return}if(pay(c)){s.research[id]=true;say(msg)}})}$("farmTech").onclick=()=>tech("farm",{gold:80,wood:30},"Better Farming researched!");$("warTech").onclick=()=>tech("war",{gold:100,stone:40},"Military Tactics researched!");$("tradeTech").onclick=()=>tech("trade",{gold:90,wood:20},"Trade Routes researched!");
-$("claim").onclick=()=>act(()=>{let q=[["gather",s.quests.gather],["build",s.quests.build],["win",s.territory>=3]],n=0;q.forEach(([id,d])=>{if(d&&!s.quests.claimed.includes(id)){s.quests.claimed.push(id);s.gold+=50;n++;say("Quest reward: +50 gold.")}});if(!n)say("No new quest rewards yet.")});
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));["kingdom","armyTab","research","quests"].forEach(id=>$(id).classList.toggle("hidden",id!==b.dataset.tab))});
-$("save").onclick=()=>{try{localStorage.setItem("kingdomConquestSave",JSON.stringify(s));say("Game saved on this device.")}catch(e){say("Save unavailable in this browser.")}};
-$("reset").onclick=()=>{if(confirm("Start a new kingdom?")){s=fresh();$("log").innerHTML="";say("A new reign begins!");render()}};
-try{let old=localStorage.getItem("kingdomConquestSave");if(old){let p=JSON.parse(old);if(p&&p.gold!==undefined){s=Object.assign(fresh(),p);say("Saved kingdom loaded.")}}}catch(e){}render();
-</script></body></html>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#172638">
+  <title>Kingdom Conquest: Crown & Realm</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+  <header class="topbar">
+    <div><p class="eyebrow">A STRATEGY ADVENTURE</p><h1>👑 Kingdom Conquest</h1><p class="subtitle">Build a realm. Raise an army. Write your legend.</p></div>
+    <div class="header-actions"><button id="saveBtn" class="button secondary">💾 Save</button><button id="loadBtn" class="button secondary">📂 Load</button><button id="newBtn" class="button danger">↻ New</button></div>
+  </header>
+
+  <section class="resource-grid" aria-label="Resources">
+    <div class="resource"><span>🪙</span><small>Gold</small><b id="gold">100</b></div>
+    <div class="resource"><span>🪵</span><small>Wood</small><b id="wood">100</b></div>
+    <div class="resource"><span>🌾</span><small>Food</small><b id="food">100</b></div>
+    <div class="resource"><span>🪨</span><small>Stone</small><b id="stone">40</b></div>
+    <div class="resource"><span>💎</span><small>Gems</small><b id="gems">0</b></div>
+    <div class="resource"><span>📅</span><small>Day</small><b id="day">1</b></div>
+  </section>
+
+  <section class="hero panel">
+    <div class="hero-art"><div class="sun">☀️</div><div class="mountains">⛰️　🌲　⛰️</div><div class="castle" id="castleArt">🏰</div><div class="flag">⚑</div><strong>YOUR CAPITAL</strong></div>
+    <div class="hero-info">
+      <div class="section-title"><h2>Realm overview</h2><span id="rank" class="pill">New Ruler</span></div>
+      <div class="metrics"><div>Castle <b id="level">1</b></div><div>Territories <b id="territory">1</b></div><div>Population <b id="population">20</b></div><div>Army power <b id="armyPower">10</b></div></div>
+      <p class="small">Castle experience</p><div class="progress"><div id="castleProgress"></div></div>
+      <p id="statusText" class="small">Your adventure begins. What kind of ruler will you become?</p>
+    </div>
+  </section>
+
+  <nav class="tabs" aria-label="Game sections">
+    <button class="tab active" data-tab="kingdomPanel">🏗️ Kingdom</button>
+    <button class="tab" data-tab="armyPanel">⚔️ Army</button>
+    <button class="tab" data-tab="worldPanel">🗺️ World</button>
+    <button class="tab" data-tab="questPanel">📜 Quests</button>
+    <button class="tab" data-tab="researchPanel">🔬 Research</button>
+  </nav>
+
+  <section id="kingdomPanel" class="panel tab-panel">
+    <h2>Develop your kingdom</h2>
+    <div class="action-grid">
+      <button id="gatherBtn" class="action green">🧺<b>Gather supplies</b><small>Collect a mix of resources</small></button>
+      <button id="farmBtn" class="action"><span>🌾</span><b>Build a farm</b><small>Cost: 30 wood</small></button>
+      <button id="lumberBtn" class="action"><span>🪓</span><b>Build a lumber camp</b><small>Cost: 35 wood</small></button>
+      <button id="mineBtn" class="action"><span>⛏️</span><b>Build a mine</b><small>Cost: 40 wood</small></button>
+      <button id="marketBtn" class="action"><span>🛒</span><b>Trade at market</b><small>Sell food or wood for gold</small></button>
+      <button id="upgradeBtn" class="action gold"><span>🏰</span><b>Upgrade castle</b><small id="upgradeCost">Costs resources</small></button>
+      <button id="endDayBtn" class="action purple"><span>🌙</span><b>End the day</b><small>Collect income and pay upkeep</small></button>
+    </div>
+    <div class="building-list"><h3>Your buildings</h3><div id="buildings"></div></div>
+  </section>
+
+  <section id="armyPanel" class="panel tab-panel hidden">
+    <h2>Army & training</h2><p class="small">Different troops contribute different amounts to army power.</p>
+    <div class="action-grid">
+      <button id="infantryBtn" class="action"><span>🛡️</span><b>Train 5 infantry</b><small>25 gold · 15 food</small></button>
+      <button id="archerBtn" class="action"><span>🏹</span><b>Train 5 archers</b><small>35 gold · 10 wood</small></button>
+      <button id="cavalryBtn" class="action"><span>🐎</span><b>Train 3 cavalry</b><small>60 gold · 20 food</small></button>
+      <button id="healBtn" class="action"><span>❤️</span><b>Rally the army</b><small>Spend 25 gold to restore morale</small></button>
+    </div>
+    <div id="armyDetails" class="detail-grid"></div>
+  </section>
+
+  <section id="worldPanel" class="panel tab-panel hidden">
+    <h2>The known world</h2><p class="small">Select a region to scout or attack it. Victory grants territory and rewards.</p>
+    <div id="worldMap" class="world-grid"></div>
+  </section>
+
+  <section id="questPanel" class="panel tab-panel hidden">
+    <div class="section-title"><h2>Royal quest board</h2><span id="questCount" class="pill">0 completed</span></div>
+    <p class="small">Complete objectives during your adventure, then claim rewards.</p>
+    <div id="questList"></div>
+    <h3>Achievements</h3><div id="achievementList"></div>
+  </section>
+
+  <section id="researchPanel" class="panel tab-panel hidden">
+    <h2>Royal academy</h2><p class="small">Permanent upgrades improve your kingdom.</p>
+    <div id="researchList"></div>
+  </section>
+
+  <section class="panel chronicles"><div class="section-title"><h2>📖 Royal chronicles</h2><button id="clearLogBtn" class="button secondary">Clear log</button></div><div id="log" aria-live="polite"></div></section>
+  <footer><p>Kingdom Conquest: Crown & Realm · Autosaves after most actions when browser storage is available.</p><p class="small">Progress is stored in this browser on this device. It does not automatically sync across devices.</p></footer>
+</main>
+<script src="game.js"></script>
+</body>
+</html>
