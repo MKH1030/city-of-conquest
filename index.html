@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kingdom Conquest</title>
+<style>
+:root{--bg:#101b2b;--panel:#192a40;--gold:#ffd166;--text:#f4f7fb;--muted:#a9bdd4;--green:#35b66a;--red:#e34d59;--blue:#4ba3ed}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#28496b 0,#101b2b 55%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1000px;margin:auto;padding:14px}.top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+h1{font-size:clamp(1.5rem,4vw,2.3rem);margin:4px 0;color:var(--gold);text-shadow:0 3px #6b4312}.sub{color:var(--muted);font-size:.9rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.stat{background:#1b2d43;border:1px solid #38516d;border-radius:13px;padding:10px;text-align:center}.stat b{display:block;font-size:1.2rem}.stat span{font-size:.8rem;color:var(--muted)}
+.scene{background:linear-gradient(#72c7f5 0 42%,#b8e9ff 42% 50%,#8acb62 50%);border:3px solid #38516d;border-radius:18px;overflow:hidden;position:relative;min-height:215px;padding:16px;color:#14263a}
+.clouds{font-size:2rem;display:flex;justify-content:space-around;opacity:.85}.mountains{text-align:center;font-size:2rem;letter-spacing:8px;margin-top:5px}.ground{position:absolute;bottom:0;left:0;right:0;height:40%;background:repeating-linear-gradient(120deg,#6fb34e 0 24px,#83c75a 24px 48px);border-top:5px solid #4f923f}
+.castle{position:relative;z-index:1;text-align:center;font-size:clamp(3rem,12vw,6rem);filter:drop-shadow(0 5px 0 #466e39);margin-top:-3px}.scene-label{position:relative;z-index:2;text-align:center;font-weight:900;font-size:1rem;text-shadow:0 1px white}
+.panel{background:rgba(25,42,64,.96);border:1px solid #38516d;border-radius:16px;padding:14px;margin-top:12px;box-shadow:0 8px 22px #0002}.panel h2{margin:0 0 10px;font-size:1.08rem;color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.btn{border:0;border-radius:12px;padding:12px 8px;font-size:.95rem;font-weight:800;color:white;background:linear-gradient(#3a5a7b,#263c56);box-shadow:inset 0 1px #ffffff40,0 3px #0a1320;cursor:pointer;min-height:64px}.btn:active{transform:translateY(2px);box-shadow:0 1px #0a1320}.btn .emoji{font-size:1.45rem;display:block;margin-bottom:3px}.green{background:linear-gradient(#3bc779,#18864a)}.blue{background:linear-gradient(#4ba3ed,#2365a3)}.red{background:linear-gradient(#f16b70,#b42d3a)}.gold{background:linear-gradient(#edb74e,#a76a18)}.purple{background:linear-gradient(#ad7bec,#7040a7)}
+.progress{height:10px;border-radius:99px;background:#0c1725;overflow:hidden;margin:6px 0 12px}.progress div{height:100%;background:linear-gradient(90deg,#f5c44f,#78d66b);width:20%}
+.log{max-height:170px;overflow:auto;color:#d4e1ee;font-size:.9rem;line-height:1.45}.log p{margin:5px 0;border-bottom:1px solid #ffffff12;padding-bottom:5px}.row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.small{font-size:.8rem;color:var(--muted)}button:focus-visible{outline:3px solid white;outline-offset:2px}
+@media(min-width:650px){.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:12px}.stats{grid-template-columns:repeat(3,1fr)}.actions{grid-template-columns:repeat(3,minmax(0,1fr))}.scene{min-height:300px}.castle{margin-top:20px}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div><h1>👑 KINGDOM CONQUEST</h1><div class="sub">Build your kingdom. Train your army. Conquer the realm.</div></div><button class="btn" id="restart">↻ Restart</button></header>
+<div class="stats">
+<div class="stat">🪙 <b id="gold">100</b><span>Gold</span></div><div class="stat">🪵 <b id="wood">100</b><span>Wood</span></div><div class="stat">🌾 <b id="food">100</b><span>Food</span></div>
+<div class="stat">🛡️ <b id="soldiers">10</b><span>Your soldiers</span></div><div class="stat">🏰 <b id="level">1</b><span>Castle level</span></div><div class="stat">🗺️ <b id="territory">1 / 5</b><span>Territories</span></div>
+</div>
+<div class="layout"><section>
+<div class="scene"><div class="clouds"><span>☁️</span><span>☁️</span><span>☁️</span></div><div class="mountains">▲ ⛰️ ▲ ⛰️</div><div class="castle" id="castle">🏰</div><div class="scene-label">YOUR KINGDOM</div><div class="ground"></div></div>
+<div class="panel"><div class="row"><b>📅 Day <span id="day">1</span></b><span class="small" id="goal">Goal: control 5 territories or reach castle level 5</span></div><h2>Castle progress</h2><div class="progress"><div id="progress"></div></div><div class="row"><span>🏴 Enemy territory: <b id="enemyTerritory">3</b></span><span>👹 Enemy soldiers: <b id="enemySoldiers">20</b></span></div></div>
+</section><section>
+<div class="panel"><h2>⚒️ Kingdom actions</h2><div class="grid actions">
+<button class="btn green" id="gather"><span class="emoji">🪙🪵</span>Gather resources</button>
+<button class="btn gold" id="farm"><span class="emoji">🌾🏡</span>Build farm<br><small>30 wood</small></button>
+<button class="btn blue" id="upgrade"><span class="emoji">🏰⬆️</span>Upgrade castle</button>
+<button class="btn" id="train5"><span class="emoji">🛡️</span>Train 5 soldiers<br><small>25 gold · 15 food</small></button>
+<button class="btn" id="train10"><span class="emoji">⚔️</span>Train 10 soldiers<br><small>50 gold · 30 food</small></button>
+<button class="btn red" id="attack"><span class="emoji">⚔️🔥</span>Attack enemy</button>
+<button class="btn purple" id="end"><span class="emoji">🌙</span>End day</button>
+</div></div>
+<div class="panel"><h2>📜 Kingdom chronicles</h2><div class="log" id="log" aria-live="polite"><p>Welcome, ruler! Gather resources and build your strength.</p></div><div class="small">Tip: your army eats 2 food per soldier each day.</div></div>
+</section></div>
+</main>
+<script>
+const initial=()=>({gold:100,wood:100,food:100,castle_level:1,soldiers:10,territory:1,days:1,enemySoldiers:20,enemyTerritory:3,over:false});
+let k=initial();
+const $=id=>document.getElementById(id);
+function say(msg){const p=document.createElement('p');p.textContent=msg;$('log').prepend(p)}
+function render(){['gold','wood','food','soldiers'].forEach(x=>$(x).textContent=k[x]);$('level').textContent=k.castle_level;$('territory').textContent=k.territory+' / 5';$('day').textContent=k.days;$('enemySoldiers').textContent=k.enemySoldiers;$('enemyTerritory').textContent=k.enemyTerritory;$('progress').style.width=Math.min(100,k.castle_level*20)+'%';$('castle').textContent=k.castle_level>=4?'🏯':k.castle_level>=2?'🏰':'🏰';}
+function alive(){if(k.territory>=5||k.castle_level>=5){say('🏆 VICTORY! Your kingdom will be remembered!');k.over=true;}else if(k.soldiers<=0){say('💀 GAME OVER — your army has been defeated. Tap Restart to try again.');k.over=true;}if(k.over){document.querySelectorAll('.actions button').forEach(b=>b.disabled=true);}}
+function act(fn){if(k.over)return;fn();render();alive()}
+$('gather').onclick=()=>act(()=>{let g=rand(20,50),w=rand(20,50),f=rand(20,50);k.gold+=g;k.wood+=w;k.food+=f;say(`Your workers gathered ${g} gold, ${w} wood, and ${f} food.`)});
+$('farm').onclick=()=>act(()=>{if(k.wood<30){say('Not enough wood. You need 30.');return}k.wood-=30;k.food+=60;say('🌾 Farm built! +60 food.')});
+$('upgrade').onclick=()=>act(()=>{let g=k.castle_level*100,w=k.castle_level*80;if(k.gold<g||k.wood<w){say(`Need ${g} gold and ${w} wood to upgrade.`);return}k.gold-=g;k.wood-=w;k.castle_level++;say(`🏰 Castle upgraded to level ${k.castle_level}!`)});
+function train(n){act(()=>{let g=n*5,f=n*3;if(k.gold<g||k.food<f){say(`Not enough supplies. Need ${g} gold and ${f} food.`);return}k.gold-=g;k.food-=f;k.soldiers+=n;say(`🛡️ Trained ${n} soldiers!`)})}
+$('train5').onclick=()=>train(5);$('train10').onclick=()=>train(10);
+$('attack').onclick=()=>act(()=>{if(k.soldiers<5){say('You need at least 5 soldiers to attack.');return}let power=k.soldiers*(.7+Math.random()*.6),ep=k.enemySoldiers*(.7+Math.random()*.6);if(power>ep){let lost=Math.min(k.soldiers,rand(1,Math.max(1,Math.floor(k.soldiers/3))));k.soldiers-=lost;k.territory++;let reward=rand(50,100);k.gold+=reward;k.enemySoldiers=Math.max(5,k.enemySoldiers-rand(2,5));k.enemyTerritory=Math.max(0,k.enemyTerritory-1);say(`🏆 VICTORY! Captured territory and ${reward} gold. Lost ${lost} soldiers.`)}else{let lost=Math.min(k.soldiers,rand(1,Math.max(1,Math.floor(k.soldiers/2))));k.soldiers-=lost;k.enemySoldiers+=rand(2,5);say(`🩸 Defeat! Lost ${lost} soldiers. The enemy army grew stronger.`)}});
+$('end').onclick=()=>act(()=>{k.days++;let need=k.soldiers*2;k.food-=need;say(`🌙 Day ${k.days} begins. Your army consumed ${need} food.`);if(k.food<0){k.food=0;let lost=Math.min(k.soldiers,2);k.soldiers-=lost;say(`Food shortage! Lost ${lost} soldiers.`)}});
+$('restart').onclick=()=>{k=initial();$('log').innerHTML='';document.querySelectorAll('.actions button').forEach(b=>b.disabled=false);say('A new kingdom begins! Good luck, ruler.');render()};
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}render();
+</script></body></html>
